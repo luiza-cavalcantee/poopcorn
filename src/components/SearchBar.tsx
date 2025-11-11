@@ -1,7 +1,9 @@
-import { useState } from "react";
+type SearchBarProps = {
+  query: string;
+  setQuery: (query: string) => void;
+};
 
-export default function SearchBar() {
-  const [query, setQuery] = useState<string>("");
+export default function SearchBar({ query, setQuery }: SearchBarProps) {
 
   return (
     <input
