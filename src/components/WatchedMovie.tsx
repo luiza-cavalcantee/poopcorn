@@ -2,9 +2,10 @@ import type { WatchedMovieType } from "../types/movies";
 
 type WatchedMovieProps = {
   movie: WatchedMovieType;
+  onDeleteWatched: (id: string) => void;
 };
 
-export default function WatchedMovie({ movie }: WatchedMovieProps) {
+export default function WatchedMovie({ movie, onDeleteWatched }: WatchedMovieProps) {
   return (
     <li>
       <img src={movie.poster} alt={`${movie.title} poster`} />
@@ -22,6 +23,8 @@ export default function WatchedMovie({ movie }: WatchedMovieProps) {
           <span>⏳</span>
           <span>{movie.runtime} min</span>
         </p>
+
+        <button className="btn-delete" onClick={() => onDeleteWatched(movie.imdbID)}>X</button>
       </div>
     </li>
   );

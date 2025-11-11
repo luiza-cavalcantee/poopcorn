@@ -8,16 +8,21 @@ type MovieDetailsProps = {
   selectedId: string;
   onCloseMovie: () => void;
   onAddWatched: (movie: WatchedMovieType) => void;
+  watched: WatchedMovieType[];
 };
 
 export default function MovieDetails({
   selectedId,
   onCloseMovie,
   onAddWatched,
+  watched,
 }: MovieDetailsProps) {
   const [movie, setMovie] = useState({});
   const [loading, setLoading] = useState(false);
   const [userRating, setUserRating] = useState(0);
+
+  const isWatched = watched.map((movie) => movie.imdbID).includes(selectedId);
+  const watchedUserRating = watched.find((movie) => movie.imdbID === selectedId)?.userRating;
 
   const {
     Title: title,
@@ -56,12 +61,13 @@ export default function MovieDetails({
             `http://www.omdbapi.com/?apikey=${API_KEY}&i=${selectedId}`
           );
 
-          if (!res.ok) throw new Error("Something went wrong fetching movie details");
+          if (!res.ok)
+            throw new Error("Something went wrong fetching movie details");
 
           const data = await res.json();
-          
+
           if (data.Response === "False") throw new Error("Movie not found");
-          
+
           setMovie(data);
         } catch (err) {
           console.error(err);
@@ -100,18 +106,24 @@ export default function MovieDetails({
 
           <section>
             <div className="rating">
-              <StarRating
-                maxRating={10}
-                size={24}
-                onSetRating={setUserRating}
-              />
-            </div>
+              {!isWatched ? (
+                <>
+                  <StarRating
+                    maxRating={10}
+                    size={24}
+                    onSetRating={setUserRating}
+                  />
 
-            {userRating > 0 && (
-              <button className="btn-add" onClick={handleAdd}>
-                + Add to list
-              </button>
-            )}
+                  {userRating > 0 && (
+                    <button className="btn-add" onClick={handleAdd}>
+                      + Add to list
+                    </button>
+                  )}
+                </>
+              ) : (
+                <p>You rated this movie {watchedUserRating} ⭐</p>
+              )}
+            </div>
             <p>
               <em>{plot}</em>
             </p>
